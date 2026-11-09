@@ -808,9 +808,11 @@ packages:
   qchain_shared:
     dependency: "direct main"
     description:
-      path: "../shared"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: "4f6d5522261059742e3d14ece0574d0b1ce613a6"
+      url: "https://github.com/teamqchain/qchain-shared.git"
+    source: git
     version: "1.0.0"
   qr:
     dependency: transitive

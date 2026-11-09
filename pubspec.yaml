@@ -46,7 +46,10 @@ dependencies:
   phosphor_flutter: ^2.1.0
   pointycastle: ^4.0.0
   qchain_shared:
-    path: ../shared
+    git:
+      url: https://github.com/teamqchain/qchain-shared.git
+      ref: main
+
   qr_flutter: ^4.1.0
   url_launcher: ^6.3.2
 
