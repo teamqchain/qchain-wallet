@@ -5,7 +5,8 @@ import 'package:qwallet_mobileapp/utils/app_config.dart';
 ///
 /// No override means the hardcoded default. Overrides live for this process
 /// only (D6): kill the app and the next cold start is back to defaults.
-/// There is no disk persistence and no mid-session reset (D2, D8).
+/// There is no disk persistence (D2). Settings → Log Out clears only the
+/// holder override and returns to Splash, where Dev Config is reachable.
 ///
 /// Dev Config (PR3) writes overrides. Until then, getters return defaults.
 class RuntimeConfig extends GetxController {
@@ -59,6 +60,12 @@ class RuntimeConfig extends GetxController {
     } else {
       _emiratesIDOverride = trimmed;
     }
+    update();
+  }
+
+  /// Drop only the holder override (Settings → Log Out). API URL is kept.
+  void clearEmiratesID() {
+    _emiratesIDOverride = null;
     update();
   }
 

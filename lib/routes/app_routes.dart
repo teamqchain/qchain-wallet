@@ -22,7 +22,8 @@ abstract class Routes {
   static const ONBOARD1 = '/onboard1';
   static const ONBOARD2 = '/onboard2';
   static const ONBOARD3 = '/onboard3';
-  /// Boot-only Dev Config (Splash logo double-tap). Not linked mid-session (D8).
+  /// Dev Config (Splash logo double-tap). Reached mid-session only via
+  /// Settings → Log Out → Splash.
   static const DEV_RUNTIME_CONFIG = '/dev-runtime-config';
   /// Dev-only register holder (from Dev Config).
   static const REGISTER_HOLDER = '/register-holder';

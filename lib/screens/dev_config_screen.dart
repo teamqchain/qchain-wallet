@@ -11,7 +11,7 @@ import 'package:qwallet_mobileapp/utils/runtime_config.dart';
 
 /// Boot-only screen: paste backend base URL and/or pick a holder.
 /// Opened via Splash logo double-tap only (D4). Save pops to Splash (D7).
-/// Always available in release (D5). No mid-session entry (D8).
+/// Always available in release (D5). Mid-session: Settings → Log Out → Splash.
 ///
 /// STORE GATE — before App Store / production: remove the Splash logo
 /// double-tap that navigates here (and re-gate Alice). Do not ship this
@@ -400,6 +400,10 @@ class _DevRuntimeConfigScreenState extends State<DevRuntimeConfigScreen> {
                 child: OutlinedButton(
                   onPressed: _testing ? null : _testConnection,
                   style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 0,
+                    ),
                     foregroundColor: qPrimary,
                     side: const BorderSide(color: qBorder),
                     minimumSize: const Size(0, 44),
@@ -413,7 +417,7 @@ class _DevRuntimeConfigScreenState extends State<DevRuntimeConfigScreen> {
                           height: 16,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Test connection'),
+                      : const Text('Test connection', ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -428,7 +432,7 @@ class _DevRuntimeConfigScreenState extends State<DevRuntimeConfigScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text('Clear URL'),
+                  child: const Text('Clear URL', ),
                 ),
               ),
             ],
@@ -535,7 +539,19 @@ class _DevRuntimeConfigScreenState extends State<DevRuntimeConfigScreen> {
               ),
             )
           else
-            ..._holders.map(_holderTile),
+            // Show up to 6 holders; beyond that only this list scrolls,
+            // so the buttons below stay reachable.
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 6 * 66.0),
+              child: Scrollbar(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: _holders.length,
+                  itemBuilder: (_, i) => _holderTile(_holders[i]),
+                ),
+              ),
+            ),
           const SizedBox(height: 14),
           const Text(
             'Manual Emirates ID (fallback)',

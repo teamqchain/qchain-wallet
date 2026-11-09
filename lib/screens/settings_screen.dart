@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:qwallet_mobileapp/Headers/QPageTitle.dart';
+import 'package:qwallet_mobileapp/controllers/activity_controller.dart';
+import 'package:qwallet_mobileapp/controllers/add_document_controller.dart';
+import 'package:qwallet_mobileapp/controllers/manage_subscriptions_controller.dart';
 import 'package:qwallet_mobileapp/controllers/wallet_controller.dart';
+import 'package:qwallet_mobileapp/routes/app_routes.dart';
 import 'package:qwallet_mobileapp/services/crypto_service.dart';
 import 'package:qwallet_mobileapp/theme/colors.dart';
 import 'package:qwallet_mobileapp/utils/app_config.dart';
+import 'package:qwallet_mobileapp/utils/logger.dart';
+import 'package:qwallet_mobileapp/utils/runtime_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -157,6 +163,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// Back to Splash as a fresh session, so a new holder can be picked in
+  /// Dev Config (logo double-tap). Keeps the API URL override; clears only
+  /// the holder. Keys stay in secure storage (scoped per EID).
+  void _logout() {
+    logDebug('[Settings] logout — returning to Splash, clearing session');
+    RuntimeConfig.to.clearEmiratesID();
+    Get.offAllNamed(Routes.SPLASH);
+    // Shell pages stay mounted during the route transition and call
+    // Get.find<...>() in build — delete controllers only once they're gone.
+    // Onboard 3 then puts fresh ones for the next holder.
+    Future.delayed(const Duration(milliseconds: 500), () {
+      void drop<T>() {
+        if (Get.isRegistered<T>()) Get.delete<T>(force: true);
+      }
+
+      drop<ActivityController>(); // onClose cancels poll timer
+      drop<ManageSubscriptionsController>(); // onClose cancels poll timer
+      drop<AddDocumentController>();
+      drop<WalletController>();
+    });
+  }
+
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -237,7 +265,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context).pop();
-                        // TODO: clear session → Get.offAllNamed(Routes.SPLASH)
+                        _logout();
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 13),
